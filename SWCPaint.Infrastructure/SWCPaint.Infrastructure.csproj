@@ -1,7 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
+	<UseWPF>true</UseWPF>
+	<ImplicitUsings>enable</ImplicitUsings>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -9,6 +11,10 @@
   <ItemGroup>
     <Folder Include="Persistence\" />
     <Folder Include="Serialization\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\SWCPaint.Core\SWCPaint.Core.csproj" />
   </ItemGroup>
 
 </Project>

@@ -1,12 +1,108 @@
-﻿<Window x:Class="SWCPaint.MainWindow"
+﻿<Window x:Class="SWCPaint.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:SWCPaint"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        xmlns:views="clr-namespace:SWCPaint.Wpf.Views"
+        xmlns:vm="clr-namespace:SWCPaint.Wpf.ViewModels"
+        xmlns:conv="clr-namespace:SWCPaint.Wpf.Converters"
+        Title="Paint" Height="720" Width="1280" Icon="/Assets/Icons/paint-icon.png">
 
-    </Grid>
+    <Window.DataContext>
+        <vm:MainViewModel />
+    </Window.DataContext>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">
+            <MenuItem Header="Файл">
+                <MenuItem Header="Новий" Command="{Binding NewProjectCommand}"/>
+                <MenuItem Header="Зберегти" Command="{Binding SaveProjectCommand}"/>
+                <Separator />
+                <MenuItem Header="Вихід" Click="Exit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Правка">
+                <MenuItem Header="Відмінити" Command="{Binding UndoCommand}"/>
+                <MenuItem Header="Повторити" Command="{Binding RedoCommand}"/>
+            </MenuItem>
+        </Menu>
+
+        <ToolBarTray DockPanel.Dock="Top">
+            <ToolBar>
+                <RadioButton Style="{StaticResource {x:Static ToolBar.RadioButtonStyleKey}}"
+                             Command="{Binding SelectToolCommand}"
+                             CommandParameter="Pencil"
+                             IsChecked="{Binding CurrentTool, Converter={StaticResource ToolToBooleanConverter}, ConverterParameter=PencilTool}"
+                             ToolTip="Олівець">
+                    <Image Source="/Assets/Icons/pencil.png" Width="16" Height="16" />
+                </RadioButton>
+
+                <Separator />
+
+                <Label Content="Колір:"/>
+                <ComboBox Width="120" 
+                          ItemsSource="{Binding AvailableColors}" 
+                          SelectedItem="{Binding SelectedStrokeColor}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Rectangle Width="14" Height="14" Fill="{Binding Name}" Margin="0,0,5,0" Stroke="Black" StrokeThickness="0.5"/>
+                                <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+
+                <Separator />
+
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0">
+                    <Label Content="Товщина:"/>
+                    <Slider x:Name="ThicknessSlider" 
+                            Width="100" 
+                            Minimum="1" 
+                            Maximum="20" 
+                            Value="{Binding Settings.Thickness}"
+                            VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Value, ElementName=ThicknessSlider, StringFormat={}{0:F0}}" 
+                               VerticalAlignment="Center" Margin="5,0,0,0" Width="20"/>
+                    <TextBlock Text="px" VerticalAlignment="Center"/>
+                </StackPanel>
+            </ToolBar>
+        </ToolBarTray>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem>
+                <TextBlock Text="{Binding StatusText}" Foreground="#666"/>
+            </StatusBarItem>
+        </StatusBar>
+
+        <Grid Background="#333">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <ScrollViewer Grid.Column="0" 
+                          HorizontalScrollBarVisibility="Auto" 
+                          VerticalScrollBarVisibility="Auto"
+                          Background="Transparent">
+                <Border Background="White" 
+                        Width="{Binding Project.Width}" 
+                        Height="{Binding Project.Height}"
+                        Margin="40"
+                        HorizontalAlignment="Center" 
+                        VerticalAlignment="Center">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="15" Opacity="0.4" ShadowDepth="0"/>
+                    </Border.Effect>
+
+                    <views:DrawingCanvas Project="{Binding Project}" 
+                                         ActiveTool="{Binding CurrentTool}" Margin="0,-20,0,20" />
+                </Border>
+            </ScrollViewer>
+
+            <views:LayersView Grid.Column="1" 
+                              DataContext="{Binding LayersContext}" 
+                              VerticalAlignment="Stretch"
+                              BorderThickness="1,0,0,0"
+                              BorderBrush="#ADB5BD"/>
+        </Grid>
+    </DockPanel>
 </Window>
