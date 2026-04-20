@@ -6,7 +6,7 @@ public sealed class DrawingSettings
 {
     private static readonly Lazy<DrawingSettings> _instance =
         new(() => new DrawingSettings());
-    private Color _strokeColor = new Color();
+    private Color _strokeColor = Color.Black;
 
     public static DrawingSettings Instance => _instance.Value;
     public Color StrokeColor {
@@ -20,7 +20,7 @@ public sealed class DrawingSettings
             SettingsChanged?.Invoke();
         } 
     } 
-    public Color? FillColor { get; set; } = new Color();
+    public Color? FillColor { get; set; } = Color.Black;
     public double Thickness { get; set; } = 2.0;
 
     public event Action? SettingsChanged;
